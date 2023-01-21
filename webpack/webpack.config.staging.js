@@ -5,7 +5,7 @@ const {
   moduleRules,
   devServer,
   plugins,
-} = require("./webpack.common.js");
+} = require("./webpack.config.base.js");
 const Dotenv = require("dotenv-webpack");
 
 module.exports = {
@@ -23,11 +23,7 @@ module.exports = {
       },
     ],
   },
-  devServer: {
-    ...devServer,
-    host: "127.0.0.1",
-    port: 8080,
-  },
+  devServer,
   plugins: [
     ...plugins,
     new Dotenv({
