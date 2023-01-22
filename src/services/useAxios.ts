@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { API_ENDPOINT } from '../constants/endpoints';
 
 export enum RequestTypes {
@@ -48,17 +48,21 @@ export const useAxios = async <T>({
       headers,
       params,
     });
+
     return {
       status: response.status,
       data: response.data as T,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error);
-    if (error instanceof Error) {
+
+    if (error instanceof AxiosError) {
       return {
+        status: error.response?.status,
         error: error.message,
       };
     }
+
     return {};
   }
 };

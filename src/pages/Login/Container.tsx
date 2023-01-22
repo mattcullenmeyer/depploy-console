@@ -6,6 +6,9 @@ function LoginContainer(): React.ReactElement {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
+  const [isIncorrectLogin, setIsIncorrectLogin] = useState(false);
+  const [isLoginError, setIsLoginError] = useState(false);
 
   const onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -20,6 +23,9 @@ function LoginContainer(): React.ReactElement {
   const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
+    setIsIncorrectLogin(false);
+    setIsLoginError(false);
+
     if (isDisabled) {
       return;
     }
@@ -31,16 +37,22 @@ function LoginContainer(): React.ReactElement {
       password,
     });
 
+    if (response.status === 400) {
+      setIsLoading(false);
+      setIsIncorrectLogin(true);
+      return;
+    }
+
     if (response.status === 200 && response.data) {
       setIsLoading(false);
       setUsername('');
       setPassword('');
+      setIsLoginSuccess(true);
       // TODO: Handle tokens
-      // TODO: Add success toast
       // TODO: Redirect to previous page or home / account page
     } else {
       setIsLoading(false);
-      // TODO: Add error message
+      setIsLoginError(true);
     }
   };
 
@@ -57,6 +69,9 @@ function LoginContainer(): React.ReactElement {
       onClickGoogle={onClickGoogle}
       onClickGitHub={onClickGitHub}
       isLoading={isLoading}
+      isLoginSuccess={isLoginSuccess}
+      isIncorrectLogin={isIncorrectLogin}
+      isLoginError={isLoginError}
     />
   );
 }
