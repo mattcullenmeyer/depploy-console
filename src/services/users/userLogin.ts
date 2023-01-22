@@ -6,7 +6,7 @@ export interface LoginParameters {
 }
 
 export interface LoginResponse {
-  token: string;
+  auth_token: string;
   refresh_token: string;
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Login } from '.';
 import { userLogin } from '../../services/users/userLogin';
+import { setAuthCookies } from '../../utils/authCookies';
 
 function LoginContainer(): React.ReactElement {
   const [username, setUsername] = useState('');
@@ -43,12 +44,20 @@ function LoginContainer(): React.ReactElement {
       return;
     }
 
+    if (response.status === 403) {
+      setIsLoading(false);
+      setUsername('');
+      setPassword('');
+      // TODO: Handle cases where user must verify their email
+      return;
+    }
+
     if (response.status === 200 && response.data) {
       setIsLoading(false);
       setUsername('');
       setPassword('');
       setIsLoginSuccess(true);
-      // TODO: Handle tokens
+      setAuthCookies(response.data);
       // TODO: Redirect to previous page or home / account page
     } else {
       setIsLoading(false);
