@@ -11,7 +11,7 @@ import {
   EmailAddressInput,
   PasswordInput,
   UsernameInput,
-} from '../../../components/Signup/FormInput';
+} from '../../../components/Signup';
 
 export interface EmailSignupProps {
   formValues: FormValues;
@@ -23,7 +23,6 @@ export interface EmailSignupProps {
   onUsernameBlur: () => void;
   onFormSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   isLoading: boolean;
-  isDisabled: boolean;
   isSignupSuccess: boolean;
 }
 
@@ -64,7 +63,6 @@ export const EmailSignup: React.FC<EmailSignupProps> = (props) => {
               onClick={props.onFormSubmit}
               fullWidth
               loading={props.isLoading}
-              disabled={props.isDisabled}
             >
               Sign up
             </Button>

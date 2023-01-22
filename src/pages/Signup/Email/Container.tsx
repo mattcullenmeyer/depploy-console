@@ -47,7 +47,16 @@ const EmailSignupContainer: React.FC = () => {
 
   const onEmailBlur = async () => {
     const email = formValues.email;
-    if (email !== '' && !validator.isEmail(email)) {
+
+    if (email === '') {
+      setFormValues({
+        ...formValues,
+        emailErrorMessage: words.emailRequired,
+      });
+      return;
+    }
+
+    if (!validator.isEmail(email)) {
       setFormValues({ ...formValues, emailErrorMessage: words.invalidEmail });
       return;
     }
@@ -55,6 +64,14 @@ const EmailSignupContainer: React.FC = () => {
 
   const onUsernameBlur = async () => {
     const username = formValues.username;
+
+    if (username === '') {
+      setFormValues({
+        ...formValues,
+        usernameErrorMessage: words.usernameRequired,
+      });
+      return;
+    }
 
     const response = await useAxios({
       path: `user/username/${username}`,
@@ -72,10 +89,16 @@ const EmailSignupContainer: React.FC = () => {
   const onPasswordBlur = () => {
     const password = formValues.password;
 
+    if (password === '') {
+      setFormValues({
+        ...formValues,
+        passwordErrorMessage: words.passwordRequired,
+      });
+      return;
+    }
+
     if (
-      password !== '' &&
       !validator.isStrongPassword(password, {
-        // TODO: return returnScore to show password strength in UI
         minLength: 10,
         minLowercase: 0,
         minUppercase: 0,
@@ -99,8 +122,10 @@ const EmailSignupContainer: React.FC = () => {
   const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    onEmailBlur();
+    // This order is intentional since they will trigger simultaneously
+    // If more than one field are blank, only the latter one will take effect
     onPasswordBlur();
+    onEmailBlur();
     onUsernameBlur();
 
     if (isDisabled) {
@@ -139,7 +164,6 @@ const EmailSignupContainer: React.FC = () => {
       onUsernameBlur={onUsernameBlur}
       onFormSubmit={onFormSubmit}
       isLoading={isLoading}
-      isDisabled={isDisabled}
       isSignupSuccess={isSignupSuccess}
     />
   );
