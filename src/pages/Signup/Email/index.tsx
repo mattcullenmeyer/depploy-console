@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card } from '@twilio-paste/core/card';
 import { Heading } from '@twilio-paste/core/heading';
 import { Box } from '@twilio-paste/core/box';
@@ -12,6 +12,8 @@ import {
   PasswordInput,
   UsernameInput,
 } from '../../../components/Signup';
+import { Toaster, useToaster } from '@twilio-paste/core/toast';
+import { words } from '../words';
 
 export interface EmailSignupProps {
   formValues: FormValues;
@@ -27,48 +29,63 @@ export interface EmailSignupProps {
 }
 
 export const EmailSignup: React.FC<EmailSignupProps> = (props) => {
+  const toaster = useToaster();
+
+  useEffect(() => {
+    if (props.isSignupSuccess) {
+      toaster.push({
+        message: words.EmailSignup.successMessage,
+        variant: 'success',
+        dismissAfter: 4000,
+      });
+    }
+  }, [props.isSignupSuccess]);
+
   return (
-    <Box display="flex" justifyContent="center">
-      <Box width="480px" marginY="space200">
-        <Card padding="space90">
-          <Heading as="h1" variant="heading30">
-            Sign up with email
-          </Heading>
-          <Stack orientation="vertical" spacing="space70">
-            <Separator orientation="horizontal" />
-            <Paragraph>
-              Sign up up with <Button variant="link">Google</Button> or{' '}
-              <Button variant="link">GitHub</Button> instead
-            </Paragraph>
-            <UsernameInput
-              value={props.formValues.username}
-              onChange={props.onUsernameChange}
-              onBlur={props.onUsernameBlur}
-              errorMessage={props.formValues.usernameErrorMessage}
-            />
-            <EmailAddressInput
-              value={props.formValues.email}
-              onChange={props.onEmailChange}
-              onBlur={props.onEmailBlur}
-              errorMessage={props.formValues.emailErrorMessage}
-            />
-            <PasswordInput
-              value={props.formValues.password}
-              onChange={props.onPasswordChange}
-              onBlur={props.onPasswordBlur}
-              errorMessage={props.formValues.passwordErrorMessage}
-            />
-            <Button
-              variant="primary"
-              onClick={props.onFormSubmit}
-              fullWidth
-              loading={props.isLoading}
-            >
-              Sign up
-            </Button>
-          </Stack>
-        </Card>
+    <>
+      <Toaster {...toaster} />
+      <Box display="flex" justifyContent="center">
+        <Box width="480px" marginY="space200">
+          <Card padding="space90">
+            <Heading as="h1" variant="heading30">
+              Sign up with email
+            </Heading>
+            <Stack orientation="vertical" spacing="space70">
+              <Separator orientation="horizontal" />
+              <Paragraph>
+                Sign up up with <Button variant="link">Google</Button> or{' '}
+                <Button variant="link">GitHub</Button> instead
+              </Paragraph>
+              <EmailAddressInput
+                value={props.formValues.email}
+                onChange={props.onEmailChange}
+                onBlur={props.onEmailBlur}
+                errorMessage={props.formValues.emailErrorMessage}
+              />
+              <UsernameInput
+                value={props.formValues.username}
+                onChange={props.onUsernameChange}
+                onBlur={props.onUsernameBlur}
+                errorMessage={props.formValues.usernameErrorMessage}
+              />
+              <PasswordInput
+                value={props.formValues.password}
+                onChange={props.onPasswordChange}
+                onBlur={props.onPasswordBlur}
+                errorMessage={props.formValues.passwordErrorMessage}
+              />
+              <Button
+                variant="primary"
+                onClick={props.onFormSubmit}
+                fullWidth
+                loading={props.isLoading}
+              >
+                Sign up
+              </Button>
+            </Stack>
+          </Card>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };

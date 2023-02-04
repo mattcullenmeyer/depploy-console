@@ -74,10 +74,13 @@ export const UsernameInput: React.FC<InputProps> = (props) => (
       onBlur={props.onBlur}
       required
     />
-    {props.errorMessage && (
-      <HelpText variant="error" id="username_help_text">
-        {props.errorMessage}
-      </HelpText>
-    )}
+    <HelpText
+      variant={props.errorMessage ? 'error' : 'default'}
+      id="username_help_text"
+    >
+      {props.errorMessage
+        ? props.errorMessage
+        : 'Username may only contain alphanumeric characters.'}
+    </HelpText>
   </>
 );

@@ -1,12 +1,12 @@
 import Cookies from 'js-cookie';
 import { AUTH_TOKEN, REFRESH_TOKEN } from '../constants/cookies';
 
-interface AuthTokens {
+export interface AuthTokensDto {
   auth_token: string;
   refresh_token: string;
 }
 
-export const setAuthCookies = (data: AuthTokens) => {
+export const setAuthCookies = (data: AuthTokensDto) => {
   const authToken = data.auth_token;
   const refreshToken = data.refresh_token;
 

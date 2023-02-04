@@ -35,7 +35,7 @@ export function Login(props: LoginProps): React.ReactElement {
       toaster.push({
         message: 'You successfully logged in to your account',
         variant: 'success',
-        dismissAfter: 3000,
+        dismissAfter: 4000,
       });
     }
   }, [props.isLoginSuccess]);
