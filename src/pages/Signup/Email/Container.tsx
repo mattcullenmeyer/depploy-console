@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import validator from 'validator';
-import useAxios, { RequestTypes } from '../../../services/useAxios';
 import { userSignup } from '../../../services/users/userSignup';
 import { EmailSignup } from '.';
 import { words } from '../words';
+import { checkUsernameAvailability } from '../helpers/usernameHelpers';
 
 export interface FormValues {
   email: string;
@@ -64,26 +64,12 @@ const EmailSignupContainer: React.FC = () => {
 
   const onUsernameBlur = async () => {
     const username = formValues.username;
+    const usernameErrorMessage = await checkUsernameAvailability(username);
 
-    if (username === '') {
-      setFormValues({
-        ...formValues,
-        usernameErrorMessage: words.usernameRequired,
-      });
-      return;
-    }
-
-    const response = await useAxios({
-      path: `user/username/${username}`,
-      method: RequestTypes.Get,
+    setFormValues({
+      ...formValues,
+      usernameErrorMessage,
     });
-
-    if (response.status === 200) {
-      setFormValues({
-        ...formValues,
-        usernameErrorMessage: words.usernameUnavailable,
-      });
-    }
   };
 
   const onPasswordBlur = () => {
@@ -122,11 +108,12 @@ const EmailSignupContainer: React.FC = () => {
   const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    // This order is intentional since they will trigger simultaneously
-    // If more than one field are blank, only the latter one will take effect
+    // This order is intentional since they will trigger simultaneously.
+    // If more than one field are blank, only the latter one will take effect.
+    // Therefore, they should appear here in reverse order of the UI form.
     onPasswordBlur();
-    onEmailBlur();
     onUsernameBlur();
+    onEmailBlur();
 
     if (isDisabled) {
       return;
@@ -144,6 +131,7 @@ const EmailSignupContainer: React.FC = () => {
       setIsLoading(false);
       setIsSignupSuccess(true);
       setFormValues(defaultFormValues);
+      // history.push(''); TODO: Navigate to confirm email page
     } else {
       setFormValues({
         ...formValues,
