@@ -13,6 +13,7 @@ import {
   UsernameInput,
 } from '../../../components/Signup';
 import { Toaster, useToaster } from '@twilio-paste/core/toast';
+import { useGoogleLogin } from '../../../hooks/useGoogleLogin';
 import { words } from '../words';
 
 export interface EmailSignupProps {
@@ -53,8 +54,12 @@ export const EmailSignup: React.FC<EmailSignupProps> = (props) => {
             <Stack orientation="vertical" spacing="space70">
               <Separator orientation="horizontal" />
               <Paragraph>
-                Sign up up with <Button variant="link">Google</Button> or{' '}
-                <Button variant="link">GitHub</Button> instead
+                Sign up up with{' '}
+                <Button variant="link" onClick={useGoogleLogin()}>
+                  Google
+                </Button>{' '}
+                {/* or <Button variant="link">GitHub</Button>  */}
+                instead
               </Paragraph>
               <EmailAddressInput
                 value={props.formValues.email}

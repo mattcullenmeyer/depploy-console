@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Signup } from '.';
-import { getGoogleUrl } from '../../utils/getGoogleUrl';
 
 export interface ErrorType {
   google: boolean;
@@ -22,10 +21,6 @@ function SignupContainer(): React.ReactElement {
   const query = new URLSearchParams(location.search);
   const error = query.get('error');
 
-  const from = ((location.state as any)?.from?.pathname as string) || '/';
-
-  const onClickGoogle = () => (window.location.href = getGoogleUrl(from));
-  const onClickGitHub = () => {};
   const onClickEmail = () => history.push('/signup/email');
 
   useEffect(() => {
@@ -38,14 +33,7 @@ function SignupContainer(): React.ReactElement {
     }
   }, [error]);
 
-  return (
-    <Signup
-      onClickGoogle={onClickGoogle}
-      onClickGitHub={onClickGitHub}
-      onClickEmail={onClickEmail}
-      errorType={errorType}
-    />
-  );
+  return <Signup onClickEmail={onClickEmail} errorType={errorType} />;
 }
 
 export default SignupContainer;

@@ -11,7 +11,7 @@ import { Alert } from '@twilio-paste/core/alert';
 import { Text } from '@twilio-paste/core/text';
 import { PasswordInput, UsernameInput } from '../../components/Login';
 import GoogleImg from '../../assets/google-icon.svg';
-import GitHubImg from '../../assets/github-icon.svg';
+// import GitHubImg from '../../assets/github-icon.svg';
 
 export interface LoginProps {
   username: string;
@@ -56,14 +56,8 @@ export function Login(props: LoginProps): React.ReactElement {
               <Separator orientation="horizontal" />
               {props.isIncorrectLogin && <IncorrectLoginAlert />}
               {props.isLoginError && <LoginErrorAlert />}
-              <UsernameInput
-                value={props.username}
-                onChange={props.onUsernameChange}
-              />
-              <PasswordInput
-                value={props.password}
-                onChange={props.onPasswordChange}
-              />
+              <UsernameInput value={props.username} onChange={props.onUsernameChange} />
+              <PasswordInput value={props.password} onChange={props.onPasswordChange} />
               <Button
                 variant="primary"
                 onClick={props.onFormSubmit}
@@ -73,22 +67,18 @@ export function Login(props: LoginProps): React.ReactElement {
                 Log in
               </Button>
               <Separator orientation="horizontal" />
-              <Button
-                variant="secondary"
-                onClick={props.onClickGoogle}
-                fullWidth
-              >
+              <Button variant="secondary" onClick={props.onClickGoogle} fullWidth>
                 <GoogleImg />
                 <Box marginLeft="space20">Sign in with Google</Box>
               </Button>
-              <Button
+              {/* <Button
                 variant="secondary"
                 onClick={props.onClickGitHub}
                 fullWidth
               >
                 <GitHubImg />
                 <Box marginLeft="space20">Sign in with GitHub</Box>
-              </Button>
+              </Button> */}
               <Anchor href="/password-reset">Forgot your password?</Anchor>
             </Stack>
           </Card>
@@ -101,9 +91,8 @@ export function Login(props: LoginProps): React.ReactElement {
 const IncorrectLoginAlert = () => (
   <Alert variant="error">
     <Text as="span">
-      <strong>Incorrect email or password.</strong> The email or password you
-      entered is incorrect. Please try again or{' '}
-      <Anchor href="/support/contact">contact support</Anchor> if you are unable
+      <strong>Incorrect email or password.</strong> The email or password you entered is incorrect.
+      Please try again or <Anchor href="/support/contact">contact support</Anchor> if you are unable
       to access your account.
     </Text>
   </Alert>
@@ -113,8 +102,7 @@ const LoginErrorAlert = () => (
   <Alert variant="error">
     <Text as="span">
       <strong>An unknown error has occurred.</strong> Please try again or{' '}
-      <Anchor href="/support/contact">contact support</Anchor> if the problem
-      continues.
+      <Anchor href="/support/contact">contact support</Anchor> if the problem continues.
     </Text>
   </Alert>
 );
