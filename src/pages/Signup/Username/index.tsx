@@ -41,13 +41,12 @@ export function SignupUsername(props: SignupUsernameProps): React.ReactElement {
         <Box width="480px" marginY="space200">
           <Card padding="space90">
             <Heading as="h1" variant="heading30">
-              Create a username
+              Choose a username
             </Heading>
             <Stack orientation="vertical" spacing="space70">
               <Separator orientation="horizontal" />
               <Paragraph>
-                Choose a username for your account. You can always change it
-                later if you want.
+                Choose a username for your account. You can always change it later if you want.
               </Paragraph>
               <UsernameInput
                 value={props.username}
@@ -62,7 +61,7 @@ export function SignupUsername(props: SignupUsernameProps): React.ReactElement {
                 disabled={props.isDisabled}
                 fullWidth
               >
-                Create username
+                Assign username
               </Button>
             </Stack>
           </Card>
