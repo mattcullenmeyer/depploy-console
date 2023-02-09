@@ -67,7 +67,6 @@ function LoginContainer(): React.ReactElement {
     }
   };
 
-  const onClickGoogle = () => {};
   const onClickGitHub = () => {};
 
   return (
@@ -77,7 +76,6 @@ function LoginContainer(): React.ReactElement {
       onUsernameChange={onUsernameChange}
       onPasswordChange={onPasswordChange}
       onFormSubmit={onFormSubmit}
-      onClickGoogle={onClickGoogle}
       onClickGitHub={onClickGitHub}
       isLoading={isLoading}
       isLoginSuccess={isLoginSuccess}

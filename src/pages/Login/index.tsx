@@ -11,6 +11,7 @@ import { Alert } from '@twilio-paste/core/alert';
 import { Text } from '@twilio-paste/core/text';
 import { PasswordInput, UsernameInput } from '../../components/Login';
 import GoogleImg from '../../assets/google-icon.svg';
+import { useGoogleLogin } from '../../hooks/useGoogleLogin';
 // import GitHubImg from '../../assets/github-icon.svg';
 
 export interface LoginProps {
@@ -19,7 +20,6 @@ export interface LoginProps {
   onUsernameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFormSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  onClickGoogle: () => void;
   onClickGitHub: () => void;
   isLoading: boolean;
   isLoginSuccess: boolean;
@@ -67,7 +67,7 @@ export function Login(props: LoginProps): React.ReactElement {
                 Log in
               </Button>
               <Separator orientation="horizontal" />
-              <Button variant="secondary" onClick={props.onClickGoogle} fullWidth>
+              <Button variant="secondary" onClick={useGoogleLogin()} fullWidth>
                 <GoogleImg />
                 <Box marginLeft="space20">Sign in with Google</Box>
               </Button>
