@@ -2,18 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Signup } from '.';
 
-export interface ErrorType {
-  google: boolean;
-  generic: boolean;
+export enum ErrorType {
+  Generic = 'GENERIC',
+  Google = 'GOOGLE',
+  GitHub = 'GITHUB',
 }
 
 function SignupContainer(): React.ReactElement {
-  const defaultErrorTypes: ErrorType = {
-    google: false,
-    generic: false,
-  };
-
-  const [errorType, setErrorType] = useState<ErrorType>(defaultErrorTypes);
+  const [errorType, setErrorType] = useState<ErrorType | null>(null);
 
   const history = useHistory();
   const location = useLocation();
@@ -26,9 +22,11 @@ function SignupContainer(): React.ReactElement {
   useEffect(() => {
     if (error) {
       if (error === 'internal') {
-        setErrorType({ ...defaultErrorTypes, generic: true });
+        setErrorType(ErrorType.Generic);
       } else if (error === 'google') {
-        setErrorType({ ...defaultErrorTypes, google: true });
+        setErrorType(ErrorType.Google);
+      } else if (error === 'github') {
+        setErrorType(ErrorType.GitHub);
       }
     }
   }, [error]);
