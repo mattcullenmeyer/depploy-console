@@ -10,9 +10,10 @@ import { Anchor } from '@twilio-paste/core/anchor';
 import { Alert } from '@twilio-paste/core/alert';
 import { Text } from '@twilio-paste/core/text';
 import { PasswordInput, UsernameInput } from '../../components/Login';
-import GoogleImg from '../../assets/google-icon.svg';
 import { useGoogleLogin } from '../../hooks/useGoogleLogin';
-// import GitHubImg from '../../assets/github-icon.svg';
+import { useGitHubLogin } from '../../hooks/useGitHubLogin';
+import GoogleImg from '../../assets/google-icon.svg';
+import GitHubImg from '../../assets/github-icon.svg';
 
 export interface LoginProps {
   username: string;
@@ -20,25 +21,36 @@ export interface LoginProps {
   onUsernameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFormSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  onClickGitHub: () => void;
   isLoading: boolean;
   isLoginSuccess: boolean;
   isIncorrectLogin: boolean;
   isLoginError: boolean;
 }
 
-export function Login(props: LoginProps): React.ReactElement {
+export function Login({
+  username,
+  password,
+  onUsernameChange,
+  onPasswordChange,
+  onFormSubmit,
+  isLoading,
+  isLoginSuccess,
+  isIncorrectLogin,
+  isLoginError,
+}: LoginProps): React.ReactElement {
   const toaster = useToaster();
 
   useEffect(() => {
-    if (props.isLoginSuccess) {
+    // TODO: This doesn't work because users are redirected to
+    // a different page before they see the toaster
+    if (isLoginSuccess) {
       toaster.push({
         message: 'You successfully logged in to your account',
         variant: 'success',
         dismissAfter: 4000,
       });
     }
-  }, [props.isLoginSuccess]);
+  }, [isLoginSuccess]);
 
   // TODO: Create /password-reset page
   // TODO: Create /support/contact page
@@ -54,16 +66,11 @@ export function Login(props: LoginProps): React.ReactElement {
             </Heading>
             <Stack orientation="vertical" spacing="space70">
               <Separator orientation="horizontal" />
-              {props.isIncorrectLogin && <IncorrectLoginAlert />}
-              {props.isLoginError && <LoginErrorAlert />}
-              <UsernameInput value={props.username} onChange={props.onUsernameChange} />
-              <PasswordInput value={props.password} onChange={props.onPasswordChange} />
-              <Button
-                variant="primary"
-                onClick={props.onFormSubmit}
-                fullWidth
-                loading={props.isLoading}
-              >
+              {isIncorrectLogin && <IncorrectLoginAlert />}
+              {isLoginError && <LoginErrorAlert />}
+              <UsernameInput value={username} onChange={onUsernameChange} />
+              <PasswordInput value={password} onChange={onPasswordChange} />
+              <Button variant="primary" onClick={onFormSubmit} fullWidth loading={isLoading}>
                 Log in
               </Button>
               <Separator orientation="horizontal" />
@@ -71,14 +78,10 @@ export function Login(props: LoginProps): React.ReactElement {
                 <GoogleImg />
                 <Box marginLeft="space20">Sign in with Google</Box>
               </Button>
-              {/* <Button
-                variant="secondary"
-                onClick={props.onClickGitHub}
-                fullWidth
-              >
+              <Button variant="secondary" onClick={useGitHubLogin()} fullWidth>
                 <GitHubImg />
                 <Box marginLeft="space20">Sign in with GitHub</Box>
-              </Button> */}
+              </Button>
               <Anchor href="/password-reset">Forgot your password?</Anchor>
             </Stack>
           </Card>

@@ -7,14 +7,11 @@ import { Stack } from '@twilio-paste/core/stack';
 import { Button } from '@twilio-paste/core/button';
 import { Paragraph } from '@twilio-paste/core/paragraph';
 import { FormValues } from './Container';
-import {
-  EmailAddressInput,
-  PasswordInput,
-  UsernameInput,
-} from '../../../components/Signup';
+import { EmailAddressInput, PasswordInput, UsernameInput } from '../../../components/Signup';
 import { Toaster, useToaster } from '@twilio-paste/core/toast';
 import { useGoogleLogin } from '../../../hooks/useGoogleLogin';
 import { words } from '../words';
+import { useGitHubLogin } from '../../../hooks/useGitHubLogin';
 
 export interface EmailSignupProps {
   formValues: FormValues;
@@ -29,18 +26,31 @@ export interface EmailSignupProps {
   isSignupSuccess: boolean;
 }
 
-export const EmailSignup: React.FC<EmailSignupProps> = (props) => {
+export const EmailSignup: React.FC<EmailSignupProps> = ({
+  formValues,
+  onEmailChange,
+  onPasswordChange,
+  onUsernameChange,
+  onEmailBlur,
+  onPasswordBlur,
+  onUsernameBlur,
+  onFormSubmit,
+  isLoading,
+  isSignupSuccess,
+}) => {
   const toaster = useToaster();
 
   useEffect(() => {
-    if (props.isSignupSuccess) {
+    // TODO: This doesn't work because users are redirected to
+    // a different page before they see the toaster
+    if (isSignupSuccess) {
       toaster.push({
         message: words.EmailSignup.successMessage,
         variant: 'success',
         dismissAfter: 4000,
       });
     }
-  }, [props.isSignupSuccess]);
+  }, [isSignupSuccess]);
 
   return (
     <>
@@ -58,33 +68,31 @@ export const EmailSignup: React.FC<EmailSignupProps> = (props) => {
                 <Button variant="link" onClick={useGoogleLogin()}>
                   Google
                 </Button>{' '}
-                {/* or <Button variant="link">GitHub</Button>  */}
+                or{' '}
+                <Button variant="link" onClick={useGitHubLogin()}>
+                  GitHub
+                </Button>{' '}
                 instead
               </Paragraph>
               <EmailAddressInput
-                value={props.formValues.email}
-                onChange={props.onEmailChange}
-                onBlur={props.onEmailBlur}
-                errorMessage={props.formValues.emailErrorMessage}
+                value={formValues.email}
+                onChange={onEmailChange}
+                onBlur={onEmailBlur}
+                errorMessage={formValues.emailErrorMessage}
               />
               <UsernameInput
-                value={props.formValues.username}
-                onChange={props.onUsernameChange}
-                onBlur={props.onUsernameBlur}
-                errorMessage={props.formValues.usernameErrorMessage}
+                value={formValues.username}
+                onChange={onUsernameChange}
+                onBlur={onUsernameBlur}
+                errorMessage={formValues.usernameErrorMessage}
               />
               <PasswordInput
-                value={props.formValues.password}
-                onChange={props.onPasswordChange}
-                onBlur={props.onPasswordBlur}
-                errorMessage={props.formValues.passwordErrorMessage}
+                value={formValues.password}
+                onChange={onPasswordChange}
+                onBlur={onPasswordBlur}
+                errorMessage={formValues.passwordErrorMessage}
               />
-              <Button
-                variant="primary"
-                onClick={props.onFormSubmit}
-                fullWidth
-                loading={props.isLoading}
-              >
+              <Button variant="primary" onClick={onFormSubmit} fullWidth loading={isLoading}>
                 Sign up
               </Button>
             </Stack>

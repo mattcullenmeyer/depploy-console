@@ -14,8 +14,8 @@ export const setAuthCookies = (data: AuthTokensDto) => {
   const in24Hours = 1;
 
   let domain = '*.depploy.io';
-  if (window.location.hostname === '127.0.0.1') {
-    domain = '127.0.0.1';
+  if (window.location.hostname === 'localhost') {
+    domain = 'localhost';
   }
 
   // Cookie expirations must align with JWT expirations
