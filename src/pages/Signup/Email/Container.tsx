@@ -7,6 +7,7 @@ import { checkUsernameAvailability } from '../helpers/usernameHelpers';
 
 export interface FormValues {
   email: string;
+  code: string;
   password: string;
   username: string;
   emailErrorMessage: string;
@@ -18,6 +19,7 @@ export interface FormValues {
 const EmailSignupContainer: React.FC = () => {
   const defaultFormValues: FormValues = {
     email: '',
+    code: '',
     password: '',
     username: '',
     emailErrorMessage: '',
@@ -29,10 +31,17 @@ const EmailSignupContainer: React.FC = () => {
   const [formValues, setFormValues] = useState<FormValues>(defaultFormValues);
   const [isLoading, setIsLoading] = useState(false);
   const [isSignupSuccess, setIsSignupSuccess] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
 
   const onEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const email = event.currentTarget.value;
     setFormValues({ ...formValues, email, emailErrorMessage: '' });
+  };
+
+  const onCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const code = event.target.value;
+    setFormValues({ ...formValues, code });
   };
 
   const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,12 +154,15 @@ const EmailSignupContainer: React.FC = () => {
     <EmailSignup
       formValues={formValues}
       onEmailChange={onEmailChange}
+      onCodeChange={onCodeChange}
       onPasswordChange={onPasswordChange}
       onUsernameChange={onUsernameChange}
       onEmailBlur={onEmailBlur}
       onPasswordBlur={onPasswordBlur}
       onUsernameBlur={onUsernameBlur}
       onFormSubmit={onFormSubmit}
+      accountCreated={accountCreated}
+      emailVerified={emailVerified}
       isLoading={isLoading}
       isSignupSuccess={isSignupSuccess}
     />
