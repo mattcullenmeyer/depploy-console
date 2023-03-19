@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { SignupUsername } from '.';
 import { useAuthAxios } from '../../../services/useAuthAxios';
 import { RequestTypes } from '../../../services/useAxios';
@@ -7,7 +7,7 @@ import { checkUsernameAvailability } from '../helpers/usernameHelpers';
 import { words } from '../words';
 
 const SignupUsernameContainer: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +49,7 @@ const SignupUsernameContainer: React.FC = () => {
       setIsLoading(false);
       setIsSuccess(true);
       setUsername('');
-      history.push(`/${username}`);
+      navigate(`/${username}`);
     } else {
       setUsernameErrorMessage(words.CreateUsername.errorMessage);
       setIsLoading(false);

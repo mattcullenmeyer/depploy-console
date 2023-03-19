@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Login } from '.';
 import { userLogin } from '../../services/users/userLogin';
 import { setAuthCookies } from '../../utils/authCookies';
 
 function LoginContainer(): React.ReactElement {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +60,7 @@ function LoginContainer(): React.ReactElement {
       setPassword('');
       setIsLoginSuccess(true);
       setAuthCookies(response.data);
-      history.push(`/${username}`);
+      navigate(`/${username}`);
     } else {
       setIsLoading(false);
       setIsLoginError(true);

@@ -5,7 +5,7 @@ import { Heading } from '@twilio-paste/core/heading';
 import { Stack } from '@twilio-paste/core/stack';
 import { Separator } from '@twilio-paste/core/separator';
 import { Paragraph } from '@twilio-paste/core/paragraph';
-import { UsernameInput } from '../../../components/Signup';
+// import { UsernameInput } from '../../../components/Signup';
 import { Button } from '@twilio-paste/core/button';
 import { Toaster, useToaster } from '@twilio-paste/core/toast';
 import { words } from '../words';
@@ -48,12 +48,12 @@ export function SignupUsername(props: SignupUsernameProps): React.ReactElement {
               <Paragraph>
                 Choose a username for your account. You can always change it later if you want.
               </Paragraph>
-              <UsernameInput
+              {/* <UsernameInput
                 value={props.username}
                 onChange={props.onUsernameChange}
                 onBlur={props.onUsernameBlur}
                 errorMessage={props.usernameErrorMessage}
-              />
+              /> */}
               <Button
                 variant="primary"
                 onClick={props.onFormSubmit}

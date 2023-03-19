@@ -5,6 +5,11 @@ readme
 
 Run this on http://localhost:3000 rather than http://127.0.0.1:3000, otherwise cookies won't work
 
+## Update local packages
+
+`npm outdated`  
+`npm update`
+
 ## Manual AWS Deployment
 
 `npm run build`  
