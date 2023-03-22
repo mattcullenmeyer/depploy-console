@@ -1,111 +1,87 @@
-import React, { useEffect } from 'react';
-import { Card } from '@twilio-paste/core/card';
-import { Heading } from '@twilio-paste/core/heading';
+import React from 'react';
 import { Box } from '@twilio-paste/core/box';
 import { Separator } from '@twilio-paste/core/separator';
 import { Stack } from '@twilio-paste/core/stack';
 import { Button } from '@twilio-paste/core/button';
-import { Toaster, useToaster } from '@twilio-paste/core/toast';
 import { Anchor } from '@twilio-paste/core/anchor';
-import { Alert } from '@twilio-paste/core/alert';
-import { Text } from '@twilio-paste/core/text';
-import { PasswordInput, UsernameInput } from '../../components/Login';
+import { FormCard } from '../../components/FormCard';
+import { BasicErrorAlert, ContactSupportLink } from '../../components/BasicErrorAlert';
+import { PasswordInput, EmailInput } from './components';
+import { paths } from '../../constants/paths';
 import { useGoogleLogin } from '../../hooks/useGoogleLogin';
 import { useGitHubLogin } from '../../hooks/useGitHubLogin';
 import GoogleImg from '../../assets/google-icon.svg';
 import GitHubImg from '../../assets/github-icon.svg';
 
 export interface LoginProps {
-  username: string;
+  email: string;
   password: string;
-  onUsernameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFormSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isDisabled: boolean;
   isLoading: boolean;
-  isLoginSuccess: boolean;
   isIncorrectLogin: boolean;
   isLoginError: boolean;
 }
 
 export function Login({
-  username,
+  email,
   password,
-  onUsernameChange,
+  onEmailChange,
   onPasswordChange,
   onFormSubmit,
+  isDisabled,
   isLoading,
-  isLoginSuccess,
   isIncorrectLogin,
   isLoginError,
 }: LoginProps): React.ReactElement {
-  const toaster = useToaster();
-
-  useEffect(() => {
-    // TODO: This doesn't work because users are redirected to
-    // a different page before they see the toaster
-    if (isLoginSuccess) {
-      toaster.push({
-        message: 'You successfully logged in to your account',
-        variant: 'success',
-        dismissAfter: 4000,
-      });
-    }
-  }, [isLoginSuccess]);
-
   // TODO: Create /password-reset page
   // TODO: Create /support/contact page
 
   return (
-    <>
-      <Toaster {...toaster} />
-      <Box display="flex" justifyContent="center">
-        <Box width="480px" marginY="space200">
-          <Card padding="space90">
-            <Heading as="h1" variant="heading30">
-              Log in to your account
-            </Heading>
-            <Stack orientation="vertical" spacing="space70">
-              <Separator orientation="horizontal" />
-              {isIncorrectLogin && <IncorrectLoginAlert />}
-              {isLoginError && <LoginErrorAlert />}
-              <UsernameInput value={username} onChange={onUsernameChange} />
-              <PasswordInput value={password} onChange={onPasswordChange} />
-              <Button variant="primary" onClick={onFormSubmit} fullWidth loading={isLoading}>
-                Log in
-              </Button>
-              <Separator orientation="horizontal" />
-              <Button variant="secondary" onClick={useGoogleLogin()} fullWidth>
-                <GoogleImg />
-                <Box marginLeft="space20">Sign in with Google</Box>
-              </Button>
-              <Button variant="secondary" onClick={useGitHubLogin()} fullWidth>
-                <GitHubImg />
-                <Box marginLeft="space20">Sign in with GitHub</Box>
-              </Button>
-              <Anchor href="/password-reset">Forgot your password?</Anchor>
-            </Stack>
-          </Card>
-        </Box>
-      </Box>
-    </>
+    <FormCard heading="Log in to your account">
+      <Stack orientation="vertical" spacing="space70">
+        <Separator orientation="horizontal" />
+        {isIncorrectLogin && <IncorrectLoginAlert />}
+        {isLoginError && <LoginErrorAlert />}
+        <EmailInput value={email} onChange={onEmailChange} />
+        <PasswordInput value={password} onChange={onPasswordChange} />
+        <Button
+          variant="primary"
+          onClick={onFormSubmit}
+          fullWidth
+          loading={isLoading}
+          disabled={isDisabled}
+        >
+          Log in
+        </Button>
+        <Anchor href={paths.passwordReset}>Forgot your password?</Anchor>
+        <Separator orientation="horizontal" />
+        <Button variant="secondary" onClick={useGoogleLogin()} fullWidth>
+          <GoogleImg />
+          <Box marginLeft="space20">Sign in with Google</Box>
+        </Button>
+        <Button variant="secondary" onClick={useGitHubLogin()} fullWidth>
+          <GitHubImg />
+          <Box marginLeft="space20">Sign in with GitHub</Box>
+        </Button>
+      </Stack>
+    </FormCard>
   );
 }
 
 const IncorrectLoginAlert = () => (
-  <Alert variant="error">
-    <Text as="span">
-      <strong>Incorrect email or password.</strong> The email or password you entered is incorrect.
-      Please try again or <Anchor href="/support/contact">contact support</Anchor> if you are unable
-      to access your account.
-    </Text>
-  </Alert>
+  <BasicErrorAlert>
+    <strong>Incorrect email or password.</strong> The email or password you entered is incorrect.
+    Please try again, reset your password, or <ContactSupportLink /> if you are unable to access
+    your account.
+  </BasicErrorAlert>
 );
 
 const LoginErrorAlert = () => (
-  <Alert variant="error">
-    <Text as="span">
-      <strong>An unknown error has occurred.</strong> Please try again or{' '}
-      <Anchor href="/support/contact">contact support</Anchor> if the problem continues.
-    </Text>
-  </Alert>
+  <BasicErrorAlert>
+    <strong>An unknown error has occurred.</strong> Please try again or <ContactSupportLink /> if
+    the problem continues.
+  </BasicErrorAlert>
 );

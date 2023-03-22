@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Signup } from '.';
 
 export enum ErrorType {
@@ -11,13 +11,13 @@ export enum ErrorType {
 function SignupContainer(): React.ReactElement {
   const [errorType, setErrorType] = useState<ErrorType | null>(null);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const query = new URLSearchParams(location.search);
   const error = query.get('error');
 
-  const onClickEmail = () => history.push('/signup/email');
+  const onClickEmail = () => navigate('/signup/email');
 
   useEffect(() => {
     if (error) {
