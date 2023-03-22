@@ -2,13 +2,12 @@ import React from 'react';
 import { Input } from '@twilio-paste/core/input';
 import { Label } from '@twilio-paste/core/label';
 import { HelpText } from '@twilio-paste/core/help-text';
-import { Anchor, Button } from '@twilio-paste/core';
 
 export interface InputProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: () => void;
-  errorMessage?: string;
+  helpText?: string;
   readonly?: boolean;
 }
 
@@ -16,7 +15,7 @@ export const EmailAddressInput: React.FC<InputProps> = ({
   value,
   onChange,
   onBlur,
-  errorMessage,
+  helpText,
   readonly = false,
 }) => (
   <>
@@ -31,16 +30,17 @@ export const EmailAddressInput: React.FC<InputProps> = ({
       onBlur={onBlur}
       required
       readOnly={readonly}
+      autoFocus
     />
-    {errorMessage && (
+    {helpText && (
       <HelpText variant="error" id="email_help_text">
-        {errorMessage}
+        {helpText}
       </HelpText>
     )}
   </>
 );
 
-export const CodeInput: React.FC<InputProps> = ({ value, onChange }) => (
+export const CodeInput: React.FC<InputProps> = ({ value, onChange, onBlur, helpText }) => (
   <>
     <Label htmlFor="code">Verification code</Label>
     <Input
@@ -50,8 +50,16 @@ export const CodeInput: React.FC<InputProps> = ({ value, onChange }) => (
       type="text"
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       required
+      autoComplete="off"
+      autoFocus
     />
+    {helpText && (
+      <HelpText variant="error" id="code_help_text">
+        {helpText}
+      </HelpText>
+    )}
   </>
 );
 
@@ -67,30 +75,10 @@ export const PasswordInput: React.FC<InputProps> = (props) => (
       onChange={props.onChange}
       onBlur={props.onBlur}
       required
+      autoFocus
     />
-    <HelpText variant={props.errorMessage ? 'error' : 'default'} id="password_help_text">
-      {props.errorMessage ? props.errorMessage : 'Password must be at least 10 characters.'}
+    <HelpText variant={props.helpText ? 'error' : 'default'} id="password_help_text">
+      {props.helpText ? props.helpText : 'Password must be at least 10 characters.'}
     </HelpText>
   </>
 );
-
-// export const UsernameInput: React.FC<InputProps> = (props) => (
-//   <>
-//     <Label htmlFor="username">Username</Label>
-//     <Input
-//       aria-describedby="username_help_text"
-//       id="username"
-//       name="username"
-//       type="text"
-//       value={props.value}
-//       onChange={props.onChange}
-//       onBlur={props.onBlur}
-//       required
-//     />
-//     <HelpText variant={props.errorMessage ? 'error' : 'default'} id="username_help_text">
-//       {props.errorMessage
-//         ? props.errorMessage
-//         : 'Username may only contain alphanumeric characters.'}
-//     </HelpText>
-//   </>
-// );

@@ -1,93 +1,118 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
+import { EmailSignup } from './index';
 import { userSignup } from '../../../services/users/userSignup';
-import { EmailSignup } from '.';
+import { checkEmailAvailability } from '../helpers/emailHelpers';
+import { verifyEmail } from '../../../services/users/verifyEmail';
+import { resendVerificationCode } from '../../../services/users/resendVerificationCode';
+import { setAuthCookies } from '../../../utils/authCookies';
+import { updatePassword } from '../../../services/users/updatePassword';
 import { words } from '../words';
-import { checkUsernameAvailability } from '../helpers/usernameHelpers';
 
-export interface FormValues {
+export interface SignupFormValues {
   email: string;
   code: string;
   password: string;
-  username: string;
-  emailErrorMessage: string;
-  passwordErrorMessage: string;
-  usernameErrorMessage: string;
-  signupErrorMessage: string;
 }
 
-const EmailSignupContainer: React.FC = () => {
-  const defaultFormValues: FormValues = {
-    email: '',
-    code: '',
-    password: '',
-    username: '',
-    emailErrorMessage: '',
-    passwordErrorMessage: '',
-    usernameErrorMessage: '',
-    signupErrorMessage: '',
-  };
+export interface SignupErrors {
+  emailHelpText: string;
+  codeHelpText: string;
+  passwordHelpText: string;
+  emailAlert: boolean;
+  verifyEmailAlert: React.ReactNode;
+  resendCodeAlert: boolean;
+  passwordAlert: boolean;
+}
 
-  const [formValues, setFormValues] = useState<FormValues>(defaultFormValues);
+const defaultSignupFormValues: SignupFormValues = {
+  email: '',
+  code: '',
+  password: '',
+};
+
+const defaultSignupErrors: SignupErrors = {
+  emailHelpText: '',
+  codeHelpText: '',
+  passwordHelpText: '',
+  emailAlert: false,
+  verifyEmailAlert: '',
+  resendCodeAlert: false,
+  passwordAlert: false,
+};
+
+const EmailSignupContainer: React.FC = () => {
+  const navigate = useNavigate();
+  const [formValues, setFormValues] = useState<SignupFormValues>(defaultSignupFormValues);
+  const [errors, setErrors] = useState<SignupErrors>(defaultSignupErrors);
+  const [isAccountCreated, setIsAccountCreated] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignupSuccess, setIsSignupSuccess] = useState(false);
-  const [accountCreated, setAccountCreated] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
+  const [isResendSuccess, setIsResendSuccess] = useState(false);
 
   const onEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const email = event.currentTarget.value;
-    setFormValues({ ...formValues, email, emailErrorMessage: '' });
+    setFormValues({ ...formValues, email });
+    setErrors({ ...errors, emailHelpText: '' });
   };
 
   const onCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const code = event.target.value;
     setFormValues({ ...formValues, code });
+    setErrors({ ...errors, codeHelpText: '' });
   };
 
   const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const password = event.target.value;
-    setFormValues({ ...formValues, password, passwordErrorMessage: '' });
-  };
-
-  const onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const username = event.target.value;
-    setFormValues({ ...formValues, username, usernameErrorMessage: '' });
+    setFormValues({ ...formValues, password });
+    setErrors({ ...errors, passwordHelpText: '' });
   };
 
   const onEmailBlur = async () => {
     const email = formValues.email;
 
     if (email === '') {
-      setFormValues({
-        ...formValues,
-        emailErrorMessage: words.emailRequired,
+      setErrors({
+        ...errors,
+        emailHelpText: words.emailRequired,
       });
       return;
     }
 
     if (!validator.isEmail(email)) {
-      setFormValues({ ...formValues, emailErrorMessage: words.invalidEmail });
+      setErrors({ ...errors, emailHelpText: words.invalidEmail });
       return;
     }
+
+    // Returns empty string if available
+    const emailHelpText = await checkEmailAvailability(email);
+
+    setErrors({
+      ...errors,
+      emailHelpText,
+    });
   };
 
-  const onUsernameBlur = async () => {
-    const username = formValues.username;
-    const usernameErrorMessage = await checkUsernameAvailability(username);
+  const onCodeBlur = () => {
+    const code = formValues.code;
 
-    setFormValues({
-      ...formValues,
-      usernameErrorMessage,
-    });
+    if (code === '') {
+      setErrors({
+        ...errors,
+        codeHelpText: words.verificationCodeRequired,
+      });
+      return;
+    }
   };
 
   const onPasswordBlur = () => {
     const password = formValues.password;
 
     if (password === '') {
-      setFormValues({
-        ...formValues,
-        passwordErrorMessage: words.passwordRequired,
+      setErrors({
+        ...errors,
+        passwordHelpText: words.passwordRequired,
       });
       return;
     }
@@ -101,70 +126,142 @@ const EmailSignupContainer: React.FC = () => {
         minSymbols: 0,
       })
     ) {
-      setFormValues({
-        ...formValues,
-        passwordErrorMessage: words.invalidPassword,
+      setErrors({
+        ...errors,
+        passwordHelpText: words.invalidPassword,
       });
     }
   };
 
-  const isDisabled =
-    formValues.email === '' ||
-    formValues.password === '' ||
-    formValues.emailErrorMessage !== '' ||
-    formValues.passwordErrorMessage !== '';
+  const onResendCode = async () => {
+    setIsLoading(true);
+    setIsResendSuccess(false);
+    setErrors({ ...errors, resendCodeAlert: false, verifyEmailAlert: '' });
 
-  const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    const response = await resendVerificationCode({
+      email: formValues.email,
+    });
+
+    if (response.status === 204) {
+      setIsLoading(false);
+      setIsResendSuccess(true);
+    } else {
+      setIsLoading(false);
+      setErrors({
+        ...errors,
+        resendCodeAlert: true,
+      });
+    }
+  };
+
+  const onEmailSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    onEmailBlur();
+
+    const isDisabled = formValues.email === '' || errors.emailHelpText !== '';
+
+    if (isDisabled) {
+      return;
+    }
+
+    setErrors({ ...errors, emailAlert: false });
+    setIsLoading(true);
+
+    const response = await userSignup({
+      email: formValues.email,
+    });
+
+    if (response.status === 201 && response.data) {
+      setIsLoading(false);
+      setIsAccountCreated(true);
+    } else {
+      setIsLoading(false);
+      setErrors({
+        ...errors,
+        emailAlert: true,
+      });
+    }
+  };
+
+  const onVerifyEmailSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    // This order is intentional since they will trigger simultaneously.
-    // If more than one field are blank, only the latter one will take effect.
-    // Therefore, they should appear here in reverse order of the UI form.
-    onPasswordBlur();
-    onUsernameBlur();
-    onEmailBlur();
+    const isDisabled = formValues.code === '' || errors.codeHelpText !== '';
 
     if (isDisabled) {
       return;
     }
 
     setIsLoading(true);
+    setErrors({ ...errors, verifyEmailAlert: '', resendCodeAlert: false });
 
-    const response = await userSignup({
-      email: formValues.email,
-      password: formValues.password,
-      username: formValues.username,
+    const response = await verifyEmail({
+      code: formValues.code,
     });
 
-    if (response.status === 201 && response.data) {
+    if (response.status === 200 && response.data) {
       setIsLoading(false);
-      setIsSignupSuccess(true);
-      setFormValues(defaultFormValues);
-      // history.push(''); TODO: Navigate to confirm email page
-    } else {
-      setFormValues({
-        ...formValues,
-        signupErrorMessage: words.signupErrorMessage,
+      setIsEmailVerified(true);
+      setAuthCookies(response.data);
+    } else if (response.status === 404) {
+      setIsLoading(false);
+      setErrors({
+        ...errors,
+        verifyEmailAlert: words.verifyEmail404ErrorMessage,
       });
+    } else {
       setIsLoading(false);
+      setErrors({
+        ...errors,
+        verifyEmailAlert: words.verifyEmailGenericErrorMessage,
+      });
+    }
+  };
+
+  const onPasswordSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    onPasswordBlur();
+
+    const isDisabled = formValues.password === '' || errors.passwordHelpText !== '';
+
+    if (isDisabled) {
+      return;
+    }
+
+    setErrors({ ...errors, passwordAlert: false });
+    setIsLoading(true);
+
+    const response = await updatePassword({
+      password: formValues.password,
+    });
+
+    if (response.status === 200 && response.data) {
+      setIsLoading(false);
+      navigate('/');
+    } else {
+      setIsLoading(false);
+      setErrors({ ...errors, passwordAlert: true });
     }
   };
 
   return (
     <EmailSignup
       formValues={formValues}
+      errors={errors}
       onEmailChange={onEmailChange}
-      onCodeChange={onCodeChange}
-      onPasswordChange={onPasswordChange}
-      onUsernameChange={onUsernameChange}
       onEmailBlur={onEmailBlur}
+      onEmailSubmit={onEmailSubmit}
+      onCodeChange={onCodeChange}
+      onCodeBlur={onCodeBlur}
+      onResendCode={onResendCode}
+      onVerifyEmailSubmit={onVerifyEmailSubmit}
+      onPasswordChange={onPasswordChange}
       onPasswordBlur={onPasswordBlur}
-      onUsernameBlur={onUsernameBlur}
-      onFormSubmit={onFormSubmit}
-      accountCreated={accountCreated}
-      emailVerified={emailVerified}
+      onPasswordSubmit={onPasswordSubmit}
+      isAccountCreated={isAccountCreated}
+      isEmailVerified={isEmailVerified}
       isLoading={isLoading}
-      isSignupSuccess={isSignupSuccess}
+      isResendSuccess={isResendSuccess}
     />
   );
 };

@@ -1,7 +1,7 @@
 import { RequestTypes, ResponseBody, useAxios } from '../useAxios';
 
 export interface LoginParameters {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -11,14 +11,14 @@ export interface LoginResponse {
 }
 
 export const userLogin = async ({
-  username,
+  email,
   password,
 }: LoginParameters): Promise<ResponseBody<LoginResponse>> => {
   const response = await useAxios<LoginResponse>({
     path: 'auth/login',
     method: RequestTypes.Post,
     data: {
-      username,
+      email,
       password,
     },
   });

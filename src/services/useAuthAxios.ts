@@ -1,10 +1,7 @@
 import Cookies from 'js-cookie';
-// Services
 import { authTokenRefresh } from './authTokenRefresh';
 import { useAxios, RequestParameters, ResponseBody } from './useAxios';
-// Utils
 import { setAuthCookies } from '../utils/authCookies';
-// Constants
 import { AUTH_TOKEN } from '../constants/cookies';
 
 export const useAuthAxios = async <T>({
@@ -23,18 +20,19 @@ export const useAuthAxios = async <T>({
       authToken = Cookies.get(AUTH_TOKEN);
     } else {
       console.error('Failed to refresh authorization token.');
-      // TODO: Redirect to login page?
+      // TODO: Notify user or navigate to login
     }
   }
 
   const response = await useAxios<T>({
-    method,
     path,
+    method,
     data,
     params,
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
   });
+
   return response;
 };

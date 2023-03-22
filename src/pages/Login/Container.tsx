@@ -6,22 +6,21 @@ import { setAuthCookies } from '../../utils/authCookies';
 
 function LoginContainer(): React.ReactElement {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
   const [isIncorrectLogin, setIsIncorrectLogin] = useState(false);
   const [isLoginError, setIsLoginError] = useState(false);
 
-  const onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  const onEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
   };
 
   const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
 
-  const isDisabled = username === '' || password === '';
+  const isDisabled = email === '' || password === '';
 
   const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -36,7 +35,7 @@ function LoginContainer(): React.ReactElement {
     setIsLoading(true);
 
     const response = await userLogin({
-      username,
+      email,
       password,
     });
 
@@ -48,7 +47,7 @@ function LoginContainer(): React.ReactElement {
 
     if (response.status === 403) {
       setIsLoading(false);
-      setUsername('');
+      setEmail('');
       setPassword('');
       // TODO: Handle cases where user must verify their email
       return;
@@ -56,11 +55,10 @@ function LoginContainer(): React.ReactElement {
 
     if (response.status === 200 && response.data) {
       setIsLoading(false);
-      setUsername('');
+      setEmail('');
       setPassword('');
-      setIsLoginSuccess(true);
       setAuthCookies(response.data);
-      navigate(`/${username}`);
+      navigate('/'); // TODO: Change this
     } else {
       setIsLoading(false);
       setIsLoginError(true);
@@ -69,13 +67,13 @@ function LoginContainer(): React.ReactElement {
 
   return (
     <Login
-      username={username}
+      email={email}
       password={password}
-      onUsernameChange={onUsernameChange}
+      onEmailChange={onEmailChange}
       onPasswordChange={onPasswordChange}
       onFormSubmit={onFormSubmit}
+      isDisabled={isDisabled}
       isLoading={isLoading}
-      isLoginSuccess={isLoginSuccess}
       isIncorrectLogin={isIncorrectLogin}
       isLoginError={isLoginError}
     />
