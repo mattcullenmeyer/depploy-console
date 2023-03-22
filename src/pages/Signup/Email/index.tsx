@@ -22,7 +22,6 @@ export interface EmailSignupProps {
   onEmailBlur: () => void;
   onEmailSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onCodeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onCodeBlur: () => void;
   onResendCode: () => void;
   onVerifyEmailSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -41,7 +40,6 @@ export const EmailSignup: React.FC<EmailSignupProps> = ({
   onEmailBlur,
   onEmailSubmit,
   onCodeChange,
-  onCodeBlur,
   onResendCode,
   onVerifyEmailSubmit,
   onPasswordChange,
@@ -116,7 +114,7 @@ export const EmailSignup: React.FC<EmailSignupProps> = ({
     );
   }
 
-  const isVerifyEmailDisabled = formValues.code === '' || errors.codeHelpText !== '';
+  const isVerifyEmailDisabled = formValues.code === '';
 
   if (!isEmailVerified) {
     return (
@@ -135,12 +133,7 @@ export const EmailSignup: React.FC<EmailSignupProps> = ({
               We sent a one-time verification code to <strong>{formValues.email}</strong>. Enter the
               code here to continue.
             </Paragraph>
-            <CodeInput
-              value={formValues.code}
-              onChange={onCodeChange}
-              onBlur={onCodeBlur}
-              helpText={errors.codeHelpText}
-            />
+            <CodeInput value={formValues.code} onChange={onCodeChange} />
             <Button
               variant="primary"
               onClick={onVerifyEmailSubmit}

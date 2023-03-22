@@ -18,7 +18,6 @@ export interface SignupFormValues {
 
 export interface SignupErrors {
   emailHelpText: string;
-  codeHelpText: string;
   passwordHelpText: string;
   emailAlert: boolean;
   verifyEmailAlert: React.ReactNode;
@@ -34,7 +33,6 @@ const defaultSignupFormValues: SignupFormValues = {
 
 const defaultSignupErrors: SignupErrors = {
   emailHelpText: '',
-  codeHelpText: '',
   passwordHelpText: '',
   emailAlert: false,
   verifyEmailAlert: '',
@@ -60,7 +58,6 @@ const EmailSignupContainer: React.FC = () => {
   const onCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const code = event.target.value;
     setFormValues({ ...formValues, code });
-    setErrors({ ...errors, codeHelpText: '' });
   };
 
   const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,26 +91,10 @@ const EmailSignupContainer: React.FC = () => {
     });
   };
 
-  const onCodeBlur = () => {
-    const code = formValues.code;
-
-    if (code === '') {
-      setErrors({
-        ...errors,
-        codeHelpText: words.verificationCodeRequired,
-      });
-      return;
-    }
-  };
-
   const onPasswordBlur = () => {
     const password = formValues.password;
 
     if (password === '') {
-      setErrors({
-        ...errors,
-        passwordHelpText: words.passwordRequired,
-      });
       return;
     }
 
@@ -186,7 +167,7 @@ const EmailSignupContainer: React.FC = () => {
   const onVerifyEmailSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    const isDisabled = formValues.code === '' || errors.codeHelpText !== '';
+    const isDisabled = formValues.code === '';
 
     if (isDisabled) {
       return;
@@ -252,7 +233,6 @@ const EmailSignupContainer: React.FC = () => {
       onEmailBlur={onEmailBlur}
       onEmailSubmit={onEmailSubmit}
       onCodeChange={onCodeChange}
-      onCodeBlur={onCodeBlur}
       onResendCode={onResendCode}
       onVerifyEmailSubmit={onVerifyEmailSubmit}
       onPasswordChange={onPasswordChange}
