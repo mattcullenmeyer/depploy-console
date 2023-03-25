@@ -1,11 +1,9 @@
 import { ContactSupportLink } from '../../components/BasicErrorAlert';
 
 export const words = {
-  emailRequired: 'Email address is required.',
   invalidEmail: 'The email address you entered is not valid.',
   emailUnavailable: 'That email address is already used by another account.',
   verificationCodeRequired: 'One-time verification code is required.',
-  passwordRequired: 'Password is required.',
   invalidPassword: 'Password must be at least 10 characters.',
   signupDescription: `
     Spend more time developing your web application and less
