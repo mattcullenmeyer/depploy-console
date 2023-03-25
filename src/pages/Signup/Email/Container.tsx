@@ -70,10 +70,6 @@ const EmailSignupContainer: React.FC = () => {
     const email = formValues.email;
 
     if (email === '') {
-      setErrors({
-        ...errors,
-        emailHelpText: words.emailRequired,
-      });
       return;
     }
 
